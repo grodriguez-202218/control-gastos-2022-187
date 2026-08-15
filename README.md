@@ -75,14 +75,13 @@ cd backend
 pnpm install
 ```
 
-Crear un archivo `.env` en `backend/` con:
 PORT=3000
 DB_USER=postgres
-DB_PASSWORD=tu_password
+DB_PASSWORD=admin123
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=authsystem_db
-JWT_SECRET=una_clave_secreta
+JWT_SECRET=8fK2mQ9xL7vR4pT6zN3wY5aB1cD8eF0gH
 
 Levantar el servidor:
 ```bash
