@@ -1,94 +1,87 @@
-<main class="w-full max-w-container-max mx-auto bg-surface-container-lowest rounded-xl shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)] p-stack-md md:p-stack-lg relative overflow-hidden">
-  <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-primary-container"></div>
+<div class="mercury-wrapper">
+  <svg class="svg-filter-hidden">
+    <defs>
+      <filter id="gooey">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
 
-  <div class="mb-stack-lg text-center">
-    <div class="inline-flex items-center justify-center w-12 h-12 bg-primary-container text-on-primary-container rounded-full mb-4">
-      <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">person_add</span>
-    </div>
-    <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">Crear Cuenta</h1>
-    <p class="font-body-md text-body-md text-on-surface-variant mt-2">Únete a AuthSystem de forma segura.</p>
+  <div class="stage">
+    <div
+      *ngFor="let blob of blobsData"
+      #blobRef
+      class="blob"
+      [style.width.px]="blob.size"
+      [style.height.px]="blob.size"
+      [style.left.%]="blob.left"
+      [style.top.%]="blob.top"
+      [style.animation-delay.s]="blob.animationDelay"
+      [style.animation-duration.s]="blob.animationDuration"
+    ></div>
   </div>
 
-  <form class="flex flex-col gap-stack-md" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div>
-      <label class="block font-label-md text-label-md text-on-surface mb-base" for="fullName">Nombre Completo</label>
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <span class="material-symbols-outlined text-outline">person</span>
+  <main class="auth-container">
+    <header class="header">
+      <h1>NUEVO<br />REGISTRER</h1>
+    </header>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="form-group">
+        <label for="fullName">Nombre Completo</label>
+        <input id="fullName" type="text" formControlName="fullName" placeholder="Ej. Juan Pérez" required />
+        <div class="input-glow"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Correo Electrónico</label>
+        <input id="email" type="email" formControlName="email" placeholder="correo@ejemplo.com" required />
+        <div class="input-glow"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••" required />
+        <div class="input-glow"></div>
+        <button type="button" class="toggle-visibility" (click)="togglePasswordVisibility()">
+          {{ showPassword() ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <input id="confirmPassword" [type]="showConfirmPassword() ? 'text' : 'password'" formControlName="confirmPassword" placeholder="••••••••" required />
+        <div class="input-glow"></div>
+        <button type="button" class="toggle-visibility" (click)="toggleConfirmPasswordVisibility()">
+          {{ showConfirmPassword() ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
+
+      <div class="role-group">
+        <div class="role-options">
+          <label class="role-pill">
+            <input type="radio" formControlName="role" value="user" />
+            <span>User</span>
+          </label>
+          <label class="role-pill">
+            <input type="radio" formControlName="role" value="admin" />
+            <span>Admin</span>
+          </label>
         </div>
-        <input id="fullName" type="text" formControlName="fullName"
-          class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-          placeholder="Ej. Juan Pérez" />
       </div>
-    </div>
 
-    <div>
-      <label class="block font-label-md text-label-md text-on-surface mb-base" for="email">Correo Electrónico</label>
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <span class="material-symbols-outlined text-outline">mail</span>
-        </div>
-        <input id="email" type="email" formControlName="email"
-          class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-          placeholder="correo@ejemplo.com" />
+      <p *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</p>
+
+      <div class="submit-wrap">
+        <div class="mercury-drop"></div>
+        <button type="submit" class="btn-base">Registrarse</button>
       </div>
-    </div>
+    </form>
 
-    <div>
-      <label class="block font-label-md text-label-md text-on-surface mb-base" for="password">Contraseña</label>
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <span class="material-symbols-outlined text-outline">lock</span>
-        </div>
-        <input id="password" type="password" formControlName="password"
-          class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-          placeholder="••••••••" />
-      </div>
-    </div>
-
-    <div>
-      <label class="block font-label-md text-label-md text-on-surface mb-base" for="confirmPassword">Confirmar Contraseña</label>
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <span class="material-symbols-outlined text-outline">lock_reset</span>
-        </div>
-        <input id="confirmPassword" type="password" formControlName="confirmPassword"
-          class="block w-full pl-10 pr-3 py-2 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-          placeholder="••••••••" />
-      </div>
-    </div>
-
-    <div>
-      <label class="block font-label-md text-label-md text-on-surface mb-base">Rol de Usuario (Demo)</label>
-      <div class="grid grid-cols-2 gap-4">
-        <label class="relative flex cursor-pointer">
-          <input class="peer sr-only" type="radio" formControlName="role" value="user" />
-          <div class="w-full p-4 border border-outline-variant rounded-lg text-center peer-checked:bg-primary-container peer-checked:border-primary peer-checked:text-on-primary-container transition-all text-on-surface-variant">
-            <span class="material-symbols-outlined block mb-1">person</span>
-            <span class="font-label-md text-label-md block">User</span>
-          </div>
-        </label>
-        <label class="relative flex cursor-pointer">
-          <input class="peer sr-only" type="radio" formControlName="role" value="admin" />
-          <div class="w-full p-4 border border-outline-variant rounded-lg text-center peer-checked:bg-primary-container peer-checked:border-primary peer-checked:text-on-primary-container transition-all text-on-surface-variant">
-            <span class="material-symbols-outlined block mb-1">admin_panel_settings</span>
-            <span class="font-label-md text-label-md block">Admin</span>
-          </div>
-        </label>
-      </div>
-    </div>
-
-    <p *ngIf="errorMessage" class="text-error font-label-sm text-label-sm text-center">{{ errorMessage }}</p>
-
-    <button type="submit" class="w-full h-12 flex items-center justify-center bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-all mt-2">
-      Registrarse
-    </button>
-  </form>
-
-  <div class="mt-stack-md text-center">
-    <p class="font-body-md text-body-md text-on-surface-variant">
-      ¿Ya tienes cuenta?
-      <a routerLink="/login" class="text-primary font-label-md text-label-md hover:underline px-1">Volver a Login</a>
-    </p>
-  </div>
-</main>
+    <footer class="footer-nav">
+      <a routerLink="/login">VOLVER A LOGIN</a>
+    </footer>
+  </main>
+</div>
