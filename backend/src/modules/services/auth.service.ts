@@ -5,7 +5,7 @@ import { UserModel, User } from "../models/user.model";
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const AuthService = {
-  async register(data: User) {
+  register: async (data: User) => {
     const existing = await UserModel.findByEmail(data.email);
     if (existing) {
       throw new Error("El correo ya está registrado");
@@ -21,7 +21,7 @@ export const AuthService = {
     return newUser;
   },
 
-  async login(email: string, password: string) {
+  login: async (email: string, password: string) => {
     const user = await UserModel.findByEmail(email);
     if (!user) {
       throw new Error("Credenciales inválidas");
@@ -32,10 +32,10 @@ export const AuthService = {
       throw new Error("Credenciales inválidas");
     }
 
-    const token = jwt.sign(
+const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       JWT_SECRET,
-      { expiresIn: "2h" }
+      { expiresIn: "1m" }
     );
 
     return {
