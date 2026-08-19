@@ -23,7 +23,6 @@ Sistema de autenticación con registro y login, con dos roles de usuario (**Admi
 control-gastos-2022187/
 ├── backend/
 │ └── src/
-│ ├── expenses/ # reservado para un futuro módulo
 │ ├── config/
 │ │ └── db.ts # conexión a PostgreSQL
 │ ├── modules/
@@ -37,7 +36,9 @@ control-gastos-2022187/
 └── src/app/
 ├── core/
 │ ├── services/
-│ └── guards/
+│ ├── guards/
+│ ├── styles/ # estilos compartidos (auth y dashboard)
+│ └── utils/
 └── pages/
 ├── login/
 ├── register/
