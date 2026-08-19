@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
 
@@ -12,37 +13,86 @@ export interface LoginResponse {
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  private logoutTimer: ReturnType<typeof setTimeout> | undefined;
 
-  register(data: {
+  constructor(private http: HttpClient, private router: Router) {}
+
+  register = (data: {
     fullName: string;
     email: string;
     password: string;
     confirmPassword: string;
     role: string;
-  }): Observable<any> {
+  }): Observable<any> => {
     return this.http.post(`${API_URL}/register`, data);
-  }
+  };
 
-  login(email: string, password: string): Observable<LoginResponse> {
+  login = (email: string, password: string): Observable<LoginResponse> => {
     return this.http.post<LoginResponse>(`${API_URL}/login`, { email, password }).pipe(
       tap((res) => {
         localStorage.setItem("token", res.token);
         localStorage.setItem("role", res.user.role);
         localStorage.setItem("fullName", res.user.full_name);
+        this.scheduleAutoLogout(res.token);
       })
     );
-  }
+  };
 
-  logout() {
+  logout = (): void => {
     localStorage.clear();
-  }
+    if (this.logoutTimer) {
+      clearTimeout(this.logoutTimer);
+    }
+  };
 
-  getRole(): string | null {
+  getRole = (): string | null => {
     return localStorage.getItem("role");
-  }
+  };
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem("token");
-  }
+  getTokenExpiration = (token: string): number | null => {
+    try {
+      const payload = token.split(".")[1];
+      const decoded = JSON.parse(atob(payload));
+      return decoded.exp ? decoded.exp * 1000 : null;
+    } catch {
+      return null;
+    }
+  };
+
+  isTokenExpired = (): boolean => {
+    const token = localStorage.getItem("token");
+    if (!token) return true;
+
+    const expiration = this.getTokenExpiration(token);
+    if (!expiration) return true;
+
+    return Date.now() >= expiration;
+  };
+
+  isLoggedIn = (): boolean => {
+    if (!localStorage.getItem("token")) return false;
+
+    if (this.isTokenExpired()) {
+      this.logout();
+      return false;
+    }
+
+    return true;
+  };
+
+  scheduleAutoLogout = (token: string): void => {
+    const expiration = this.getTokenExpiration(token);
+    if (!expiration) return;
+
+    const msUntilExpiration = expiration - Date.now();
+
+    if (this.logoutTimer) {
+      clearTimeout(this.logoutTimer);
+    }
+
+    this.logoutTimer = setTimeout(() => {
+      this.logout();
+      this.router.navigate(["/login"], { queryParams: { session: "expired" } });
+    }, msUntilExpiration);
+  };
 }
