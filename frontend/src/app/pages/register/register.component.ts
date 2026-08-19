@@ -1,19 +1,25 @@
-import { Component } from "@angular/core";
+import { Component, ElementRef, HostListener, QueryList, ViewChildren, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink, Router } from "@angular/router";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../core/services/auth.service";
+import { BlobField, generateBlobs, moveBlobs } from "../../core/utils/blobs";
 
 @Component({
   selector: "app-register",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./register.component.html",
-  styleUrl: "./register.component.css",
+  styleUrl: "../../core/styles/auth.css",
 })
 export class RegisterComponent {
   registerForm: FormGroup;
   errorMessage = "";
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
+  blobsData: BlobField[] = [];
+
+  @ViewChildren("blobRef") blobRefs!: QueryList<ElementRef<HTMLDivElement>>;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.registerForm = this.fb.group({
@@ -23,9 +29,26 @@ export class RegisterComponent {
       confirmPassword: ["", Validators.required],
       role: ["user", Validators.required],
     });
+
+    this.blobsData = generateBlobs();
   }
 
-  onSubmit() {
+  @HostListener("window:mousemove", ["$event"])
+  onMouseMove = (e: MouseEvent): void => {
+    if (this.blobRefs) {
+      moveBlobs(this.blobRefs.map((ref) => ref.nativeElement), e);
+    }
+  };
+
+  togglePasswordVisibility = (): void => {
+    this.showPassword.set(!this.showPassword());
+  };
+
+  toggleConfirmPasswordVisibility = (): void => {
+    this.showConfirmPassword.set(!this.showConfirmPassword());
+  };
+
+  onSubmit = (): void => {
     if (this.registerForm.invalid) return;
 
     this.authService.register(this.registerForm.value).subscribe({
@@ -34,5 +57,5 @@ export class RegisterComponent {
         this.errorMessage = err.error?.message || "Error al registrarse";
       },
     });
-  }
+  };
 }

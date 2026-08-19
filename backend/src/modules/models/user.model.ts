@@ -9,12 +9,12 @@ export interface User {
 }
 
 export const UserModel = {
-  async findByEmail(email: string): Promise<User | null> {
+  findByEmail: async (email: string): Promise<User | null> => {
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     return result.rows[0] || null;
   },
 
-  async create(user: User): Promise<User> {
+  create: async (user: User): Promise<User> => {
     const result = await pool.query(
       `INSERT INTO users (full_name, email, password, role)
        VALUES ($1, $2, $3, $4)

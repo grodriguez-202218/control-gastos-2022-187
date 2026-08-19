@@ -1,28 +1,55 @@
-import { Component } from "@angular/core";
+import { Component, ElementRef, HostListener, QueryList, ViewChildren, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterLink, Router } from "@angular/router";
+import { RouterLink, Router, ActivatedRoute } from "@angular/router";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../../core/services/auth.service";
+import { BlobField, generateBlobs, moveBlobs } from "../../core/utils/blobs";
 
 @Component({
   selector: "app-login",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: "./login.component.html",
-  styleUrl: "./login.component.css",
+  styleUrl: "../../core/styles/auth.css",
 })
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage = "";
+  showPassword = signal(false);
+  blobsData: BlobField[] = [];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  @ViewChildren("blobRef") blobRefs!: QueryList<ElementRef<HTMLDivElement>>;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
       password: ["", Validators.required],
     });
+
+    this.blobsData = generateBlobs();
+
+    if (this.route.snapshot.queryParamMap.get("session") === "expired") {
+      this.errorMessage = "Su sesión ha expirado. Inicie sesión nuevamente.";
+    }
   }
 
-  onSubmit() {
+  @HostListener("window:mousemove", ["$event"])
+  onMouseMove = (e: MouseEvent): void => {
+    if (this.blobRefs) {
+      moveBlobs(this.blobRefs.map((ref) => ref.nativeElement), e);
+    }
+  };
+
+  togglePasswordVisibility = (): void => {
+    this.showPassword.set(!this.showPassword());
+  };
+
+  onSubmit = (): void => {
     if (this.loginForm.invalid) return;
 
     const { email, password } = this.loginForm.value;
@@ -38,5 +65,5 @@ export class LoginComponent {
         this.errorMessage = err.error?.message || "Error al iniciar sesión";
       },
     });
-  }
+  };
 }

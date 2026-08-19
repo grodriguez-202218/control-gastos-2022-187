@@ -1,28 +1,16 @@
-<div class="min-h-screen bg-background">
-  <header class="bg-surface-container-lowest shadow-sm">
-    <div class="max-w-3xl mx-auto flex items-center justify-between px-margin-mobile md:px-gutter h-16">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">person</span>
-        <span class="font-headline-md text-headline-md text-primary font-bold">Mi Panel</span>
-      </div>
-      <button (click)="logout()" class="flex items-center gap-1 text-on-surface-variant hover:text-error transition-colors font-label-md text-label-md">
-        <span class="material-symbols-outlined text-[20px]">logout</span>
-        Cerrar sesión
-      </button>
+<div class="dash-wrapper">
+  <header class="dash-header">
+    <div>
+      <span class="brand-id">System Node: 0x991</span>
+      <h1>MI PANEL</h1>
     </div>
+    <button (click)="logout()" class="logout-btn">Cerrar sesión</button>
   </header>
 
-  <main class="max-w-3xl mx-auto p-margin-mobile md:p-gutter">
-    <div class="bg-surface-container-lowest rounded-xl p-stack-lg shadow-sm border border-outline-variant text-center">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-container text-on-primary-container rounded-full mb-4">
-        <span class="material-symbols-outlined text-3xl">person</span>
-      </div>
-      <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">
-        Hola, {{ fullName }}
-      </h1>
-      <p class="font-body-md text-body-md text-on-surface-variant mt-2">
-        Has iniciado sesión como usuario estándar.
-      </p>
+  <main class="dash-main">
+    <div class="welcome-card">
+      <p class="welcome-line">Hola, {{ fullName }}</p>
+      <p class="welcome-sub">Has iniciado sesión como usuario estándar.</p>
     </div>
   </main>
 </div>

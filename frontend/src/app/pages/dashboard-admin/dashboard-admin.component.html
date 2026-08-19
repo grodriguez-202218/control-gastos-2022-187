@@ -1,43 +1,14 @@
-<div class="min-h-screen bg-background">
-  <header class="bg-surface-container-lowest shadow-sm">
-    <div class="max-w-5xl mx-auto flex items-center justify-between px-margin-mobile md:px-gutter h-16">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">admin_panel_settings</span>
-        <span class="font-headline-md text-headline-md text-primary font-bold">Panel Admin</span>
-      </div>
-      <button (click)="logout()" class="flex items-center gap-1 text-on-surface-variant hover:text-error transition-colors font-label-md text-label-md">
-        <span class="material-symbols-outlined text-[20px]">logout</span>
-        Cerrar sesión
-      </button>
+<div class="dash-wrapper">
+  <header class="dash-header">
+    <div>
+      <span class="brand-id">System Node: 0x992</span>
+      <h1>PANEL ADMIN</h1>
     </div>
+    <button (click)="logout()" class="logout-btn">Cerrar sesión</button>
   </header>
 
-  <main class="max-w-5xl mx-auto p-margin-mobile md:p-gutter">
-    <div class="mb-stack-lg">
-      <h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface">
-        Bienvenido, {{ fullName }}
-      </h1>
-      <p class="font-body-md text-body-md text-on-surface-variant mt-1">
-        Tienes acceso completo de administrador al sistema.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-stack-lg">
-      <div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-sm border border-outline-variant">
-        <span class="material-symbols-outlined text-primary text-3xl">group</span>
-        <p class="font-headline-md text-headline-md text-on-surface mt-2">{{ totalUsers }}</p>
-        <p class="font-body-md text-body-md text-on-surface-variant">Usuarios registrados</p>
-      </div>
-      <div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-sm border border-outline-variant">
-        <span class="material-symbols-outlined text-primary text-3xl">admin_panel_settings</span>
-        <p class="font-headline-md text-headline-md text-on-surface mt-2">{{ totalAdmins }}</p>
-        <p class="font-body-md text-body-md text-on-surface-variant">Administradores</p>
-      </div>
-      <div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-sm border border-outline-variant">
-        <span class="material-symbols-outlined text-primary text-3xl">verified_user</span>
-        <p class="font-headline-md text-headline-md text-on-surface mt-2">Activo</p>
-        <p class="font-body-md text-body-md text-on-surface-variant">Estado del sistema</p>
-      </div>
-    </div>
+  <main class="dash-main">
+    <p class="welcome-line">Bienvenido, {{ fullName }}</p>
+    <p class="welcome-sub">Tienes acceso completo de administrador al sistema.</p>
   </main>
 </div>
