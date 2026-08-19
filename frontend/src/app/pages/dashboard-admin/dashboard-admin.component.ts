@@ -1,28 +1,30 @@
 import { Component, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
 
 @Component({
   selector: "app-dashboard-admin",
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: "./dashboard-admin.component.html",
-  styleUrl: "./dashboard-admin.component.css",
+  styleUrl: "../../core/styles/dashboard.css",
 })
 export class DashboardAdminComponent implements OnInit {
   fullName = "";
-  totalUsers = 0;
-  totalAdmins = 0;
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit() {
+  ngOnInit = (): void => {
     this.fullName = localStorage.getItem("fullName") || "Administrador";
-  }
 
-  logout() {
+    const token = localStorage.getItem("token");
+    if (token && !this.authService.isTokenExpired()) {
+      this.authService.scheduleAutoLogout(token);
+    }
+  };
+
+  logout = (): void => {
     this.authService.logout();
     this.router.navigate(["/login"]);
-  }
+  };
 }

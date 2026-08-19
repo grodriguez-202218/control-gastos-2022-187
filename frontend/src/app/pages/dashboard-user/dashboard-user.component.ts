@@ -7,19 +7,24 @@ import { AuthService } from "../../core/services/auth.service";
   standalone: true,
   imports: [],
   templateUrl: "./dashboard-user.component.html",
-  styleUrl: "./dashboard-user.component.css",
+  styleUrl: "../../core/styles/dashboard.css",
 })
 export class DashboardUserComponent implements OnInit {
   fullName = "";
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit() {
+  ngOnInit = (): void => {
     this.fullName = localStorage.getItem("fullName") || "Usuario";
-  }
 
-  logout() {
+    const token = localStorage.getItem("token");
+    if (token && !this.authService.isTokenExpired()) {
+      this.authService.scheduleAutoLogout(token);
+    }
+  };
+
+  logout = (): void => {
     this.authService.logout();
     this.router.navigate(["/login"]);
-  }
+  };
 }
